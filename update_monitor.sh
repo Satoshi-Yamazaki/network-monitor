@@ -14,3 +14,4 @@ sudo systemctl start $SERVICE_NAME
 
 echo "=== Status do serviço ==="
 sudo systemctl status $SERVICE_NAME --no-pager
+
