@@ -14,7 +14,7 @@ def ping_host(host):
     except:
         return None
 
-import speedtest
+import speedtest # type: ignore
 import datetime
 
 def medir_speedtest(data_lock, ping_status):
