@@ -42,6 +42,42 @@ pip install flask
 echo "=== Preparando pastas de logs ==="
 mkdir -p logs
 
+echo "=== Criando serviço systemd para monitor ==="
+
+SERVICE_FILE="/etc/systemd/system/monitor-ping.service"
+PROJECT_DIR="$(pwd)"  # assume que você está na raiz do projeto
+USER_NAME=$(whoami)
+
+sudo bash -c "cat > $SERVICE_FILE <<EOF
+[Unit]
+Description=Monitor de Ping
+After=network.target
+
+[Service]
+Type=simple
+User=$USER_NAME
+WorkingDirectory=$PROJECT_DIR
+ExecStart=$PROJECT_DIR/venv/bin/python $PROJECT_DIR/app.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+"
+
+echo "=== Recarregando systemd ==="
+sudo systemctl daemon-reload
+
+echo "=== Ativando serviço para iniciar junto com o sistema ==="
+sudo systemctl enable monitor-ping.service
+
+echo "=== Iniciando serviço agora ==="
+sudo systemctl start monitor-ping.service
+
+echo "=== Status do serviço ==="
+sudo systemctl status monitor-ping.service --no-pager
+
 echo "=== Setup finalizado ==="
 echo "Para iniciar a aplicação:"
 echo "1. source venv/bin/activate"
